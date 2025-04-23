@@ -1,5 +1,6 @@
 <?php
 include_once("connection.php");
+include_once("function.php");
 
 if (!isset($_SESSION["user_id"])) {
     header("Location: login.php");
@@ -17,10 +18,21 @@ $user = $result->fetch_assoc();
     <title>Dashboard</title>
 </head>
 <body style="text-align:center;">
+
+<?php
+$result = $conn->query("SELECT name, profile_picture FROM Users WHERE user_id = $user_id");
+$user = $result->fetch_assoc();
+echo "<img src='uploads/" . $user['profile_picture'] . "' width='100' height='100'><br>";
+?>
+
     <h2>Welcome, <?php echo $user['name']; ?>!</h2>
     <nav>
         <a href="library.php">Library</a> |
+        <?php if (isAdmin()): ?>
+    | <a href="manage_users.php">Manage Users</a>
+<?php endif; ?>
         <a href="changepassword.php">Change Password</a> |
+        <a href="update_profile.php">Update Profile</a> |
         <a href="logout.php">Logout</a>
     </nav>
     <div style="background-color:#e0e0e0; padding:10px;">
@@ -30,3 +42,5 @@ $user = $result->fetch_assoc();
     </div>
 </body>
 </html>
+
+
