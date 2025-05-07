@@ -1,24 +1,31 @@
 <?php
 include_once("connection.php");
 
+// Ensure the user is logged in
 if (!isset($_SESSION["user_id"])) {
     header("Location: login.php");
     exit();
 }
 
+$user_id = $_SESSION["user_id"];
+$result = $conn->query("SELECT name FROM Users WHERE user_id = $user_id");
+$user = $result->fetch_assoc();
+
+// Handle form submission (you can add your logic here later)
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $new_pass = password_hash(trim($_POST['new_password']), PASSWORD_DEFAULT);
-    $user_id = $_SESSION["user_id"];
+    $checkin_date = $_POST['checkin_date'];
+    $checkout_date = $_POST['checkout_date'];
+    $guests = $_POST['guests'];
 
-    $stmt = $conn->prepare("UPDATE Users SET password = ? WHERE user_id = ?");
-    $stmt->bind_param("si", $new_pass, $user_id);
-
-    if ($stmt->execute()) {
-        echo "<script>alert('Password changed successfully.'); window.location.href='dashboard.php';</script>";
-        exit();
-    } else {
-        $error = "Failed to update password.";
-    }
+    // For now, just display the submitted data
+    echo "<div class='container'>";
+    echo "<h2>Booking Request</h2>";
+    echo "<p>Check-in Date: " . htmlspecialchars($checkin_date) . "</p>";
+    echo "<p>Check-out Date: " . htmlspecialchars($checkout_date) . "</p>";
+    echo "<p>Number of Guests: " . htmlspecialchars($guests) . "</p>";
+    echo "<p><a href='dashboard.php' class='back-link'>Back to Dashboard</a></p>";
+    echo "</div>";
+    exit(); // Stop further page rendering for now
 }
 ?>
 
@@ -27,9 +34,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Change Password</title>
+    <title>Book a Room</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap">
     <style>
+        /* Styles copied from dashboard.php */
         /* General reset */
         * {
             margin: 0;
@@ -42,11 +50,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             background: linear-gradient(135deg, #6a11cb, #2575fc); /* Gradient from purple to blue */
             color: #fff;
             display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
+            height: 100vh;
             text-align: center;
+            justify-content: center; /* Center horizontally */
+            align-items: center; /* Center vertically */
         }
 
         .container {
@@ -55,7 +62,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             padding: 30px;
             box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
             width: 100%;
-            max-width: 500px;
+            max-width: 600px; /* Adjust as needed for the booking form */
         }
 
         h2 {
@@ -67,18 +74,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             letter-spacing: 1px;
         }
 
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
         label {
             display: block;
             color: #ddd;
             font-size: 1.1rem;
             margin-bottom: 10px;
-            text-align: left;
         }
 
-        input[type="password"] {
+        input[type="date"],
+        input[type="number"] {
             width: 100%;
             padding: 15px;
-            margin-bottom: 20px;
             border: none;
             border-radius: 50px;
             background-color: rgba(255, 255, 255, 0.2);
@@ -87,16 +98,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             transition: background-color 0.3s ease;
         }
 
-        input[type="password"]::placeholder {
+        input[type="date"]::placeholder,
+        input[type="number"]::placeholder {
             color: #ccc;
         }
 
-        input[type="password"]:focus {
+        input[type="date"]:focus,
+        input[type="number"]:focus {
             background-color: rgba(255, 255, 255, 0.3);
             outline: none;
         }
 
-        button {
+        button[type="submit"] {
             display: inline-block;
             padding: 15px 30px;
             background-color: #f5a623;
@@ -111,16 +124,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             margin-top: 20px;
         }
 
-        button:hover {
+        button[type="submit"]:hover {
             background-color: #fff;
             color: #2575fc;
             transform: scale(1.05);
-        }
-
-        .error {
-            color: #ff4d4d;
-            margin-top: 15px;
-            font-size: 1rem;
         }
 
         .back-link {
@@ -138,59 +145,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             color: #f5a623;
             text-decoration: underline;
         }
-
-        /* Mobile-Friendly Design */
-        @media (max-width: 768px) {
-            .container {
-                padding: 20px;
-            }
-
-            h2 {
-                font-size: 1.8rem;
-                margin-bottom: 20px;
-            }
-
-            label {
-                font-size: 1rem;
-            }
-
-            input[type="password"] {
-                padding: 12px;
-                font-size: 0.9rem;
-                margin-bottom: 15px;
-            }
-
-            button {
-                padding: 12px 25px;
-                font-size: 1rem;
-            }
-
-            .back-link {
-                font-size: 0.9rem;
-            }
-        }
     </style>
 </head>
 <body>
-
     <div class="container">
-        <h2>Change Password</h2>
-
-        <?php if (isset($error)) { ?>
-            <div class="error"><?php echo $error; ?></div>
-        <?php } ?>
-
+        <h2>Book a Room</h2>
         <form method="POST">
-            <label for="new_password">New Password:</label>
-            <input type="password" name="new_password" id="new_password" required placeholder="Enter new password">
-
-            <button type="submit">Update Password</button>
+            <div class="form-group">
+                <label for="checkin_date">Check-in Date:</label>
+                <input type="date" id="checkin_date" name="checkin_date" required>
+            </div>
+            <div class="form-group">
+                <label for="checkout_date">Check-out Date:</label>
+                <input type="date" id="checkout_date" name="checkout_date" required>
+            </div>
+            <div class="form-group">
+                <label for="guests">Number of Guests:</label>
+                <input type="number" id="guests" name="guests" min="1" value="1" required>
+            </div>
+            <button type="submit">Check Availability</button>
         </form>
-
         <div class="back-link">
             <p><a href="dashboard.php">Back to Dashboard</a></p>
         </div>
     </div>
-
 </body>
 </html>

@@ -231,9 +231,11 @@ $user = $result->fetch_assoc();
 </head>
 <body>
     <div class="container">
-        <!-- Sidebar for Navigation Links -->
         <div class="sidebar">
             <a href="library.php">Library</a>
+            <a href="book_room.php">Book a Room</a>
+            <a href="my_bookings.php">My Bookings</a>
+            <a href="hotel_amenities.php">Hotel Amenities</a>
             <?php if (isAdmin()): ?>
                 <a href="manage_users.php">Manage Users</a>
             <?php endif; ?>
@@ -242,9 +244,7 @@ $user = $result->fetch_assoc();
             <a href="logout.php">Logout</a>
         </div>
 
-        <!-- Main Content Area -->
         <div class="main-content">
-            <!-- Profile Section -->
             <div class="profile">
                 <?php
                 $result = $conn->query("SELECT name, profile_picture FROM Users WHERE user_id = $user_id");
@@ -256,15 +256,13 @@ $user = $result->fetch_assoc();
                 <a href="update_profile.php" class="btn">View Profile</a>
             </div>
 
-            <!-- Info Panel -->
             <div class="info-panel">
                 <h1>Hotel Reservation System</h1>
                 <h3>Welcome Panel</h3>
                 <p>This dashboard lets you manage your bookings, access the library, and update your account settings. Explore the system using the navigation links on the left.</p>
-                <a href="library.php" class="get-started-btn">Get Started</a>
+                <a href="book_room.php" class="get-started-btn">Book a Room</a>
             </div>
 
-            <!-- Footer -->
             <footer>
                 <p>&copy; 2025 Hotel Reservation System. <a href="privacy.php">Privacy Policy</a> | <a href="terms.php">Terms & Conditions</a></p>
             </footer>

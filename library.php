@@ -34,7 +34,7 @@ $profile_picture = $user['profile_picture'] ? 'uploads/' . $user['profile_pictur
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             text-align: center;
             padding: 40px;
             background-size: cover;
@@ -171,6 +171,11 @@ $profile_picture = $user['profile_picture'] ? 'uploads/' . $user['profile_pictur
                 padding: 20px;
             }
 
+            nav {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
             nav a {
                 font-size: 1rem;
                 padding: 12px 25px;
@@ -189,13 +194,11 @@ $profile_picture = $user['profile_picture'] ? 'uploads/' . $user['profile_pictur
 <body>
 
     <div class="container">
-        <!-- Profile Section -->
         <div class="profile">
             <img src="<?php echo $profile_picture; ?>" alt="Profile Picture"><br>
             <h2>Welcome, <?php echo htmlspecialchars($user['name']); ?>!</h2>
         </div>
 
-        <!-- Navigation Links -->
         <nav id="nav-links">
             <a href="library.php" onclick="hideButtons(this)">Library</a>
             <a href="changepassword.php" onclick="hideButtons(this)">Change Password</a>
@@ -203,20 +206,18 @@ $profile_picture = $user['profile_picture'] ? 'uploads/' . $user['profile_pictur
             <a href="logout.php" onclick="hideButtons(this)">Logout</a>
         </nav>
 
-        <!-- Content Section -->
         <div class="content-container">
             <h3>Welcome to the Library</h3>
             <p>This is a placeholder for your library content. You can fill it with books, articles, or other resources. You can also organize your materials by category and manage their access.</p>
-            
+
             <div class="colorful-section">
-                <h3>Explore Categories</h3>
-                <p>Browse through our extensive collection of books and resources. We have materials from various categories including fiction, non-fiction, technology, business, and much more.</p>
+                <h3>Explore Library Features</h3>
+                <p>Here you might list specific library functionalities or resources available to the user.</p>
             </div>
 
-            <a href="dashboard.php" class="btn">Back to Dashboard</a>
+            <a href="dashboard.php" class="btn" style="display: inline-block; margin-top: 20px; padding: 12px 25px; background-color: #2575fc; color: #fff; font-size: 1rem; border-radius: 50px; text-decoration: none; transition: background-color 0.3s ease;">Back to Dashboard</a>
         </div>
 
-        <!-- Footer -->
         <footer>
             <p>&copy; 2025 Hotel Reservation System. <a href="privacy.php">Privacy Policy</a> | <a href="terms.php">Terms & Conditions</a></p>
         </footer>
@@ -228,18 +229,19 @@ $profile_picture = $user['profile_picture'] ? 'uploads/' . $user['profile_pictur
             const navLinks = document.querySelectorAll('#nav-links a');
             navLinks.forEach(link => {
                 if (link !== clickedLink) {
-                    link.classList.add('hidden');  // Hide other links
+                    link.classList.add('hidden'); // Hide other links
                 }
             });
 
             // Optionally, add a way to show the buttons again (e.g., by adding a back button)
             const backButton = document.createElement('a');
             backButton.href = "#";
-            backButton.textContent = "Back to Dashboard";
+            backButton.textContent = "Back to Library Navigation";
             backButton.classList.add('btn', 'back-button');
+            backButton.style.marginTop = '20px'; // Add some spacing
             backButton.onclick = function() {
-                navLinks.forEach(link => link.classList.remove('hidden'));  // Show all links again
-                backButton.remove();  // Remove the back button
+                navLinks.forEach(link => link.classList.remove('hidden')); // Show all links again
+                backButton.remove(); // Remove the back button
             };
 
             document.querySelector('.content-container').appendChild(backButton); // Append back button
